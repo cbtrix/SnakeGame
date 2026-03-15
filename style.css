@@ -1,0 +1,479 @@
+/* =============================================
+   VARIÁVEIS — paleta verde fósforo estilo arcade
+   ============================================= */
+:root {
+  --bg:        #020d04;
+  --green:     #00ff41;
+  --green-dim: #00a028;
+  --green-dark:#004010;
+  --green-hi:  #ccffdd;
+  --amber:     #ffb800;
+  --red:       #ff2244;
+  --border:    #00ff4133;
+  --shadow-g:  0 0 10px #00ff4166;
+  --shadow-g2: 0 0 24px #00ff4133;
+  --font:      'Press Start 2P', monospace;
+  --cell:      20px;   /* tamanho de cada célula do grid */
+}
+
+/* =============================================
+   RESET E BASE
+   ============================================= */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+
+  /* Grade de fundo estilo circuito */
+  background-image:
+    linear-gradient(rgba(0,255,65,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,255,65,0.03) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* =============================================
+   EFEITO CRT — linhas de scan e curvatura
+   ============================================= */
+.crt-overlay {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  /* Linhas horizontais de scanline */
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.18) 2px,
+    rgba(0,0,0,0.18) 4px
+  );
+
+  /* Vinheta nas bordas */
+  box-shadow: inset 0 0 120px rgba(0,0,0,0.7);
+
+  /* Animação de flicker sutil */
+  animation: flicker 8s infinite;
+}
+
+@keyframes flicker {
+  0%,100%  { opacity: 1; }
+  92%      { opacity: 1; }
+  93%      { opacity: 0.85; }
+  94%      { opacity: 1; }
+  97%      { opacity: 0.9; }
+  98%      { opacity: 1; }
+}
+
+/* =============================================
+   WRAPPER E TELAS
+   ============================================= */
+.wrapper {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 20px;
+}
+
+.screen {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 520px;
+  animation: screenIn 0.3s ease;
+}
+
+.screen.active { display: flex; }
+
+@keyframes screenIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* =============================================
+   TELA: MENU
+   ============================================= */
+
+/* Bloco de título */
+.title-block {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.title-pre {
+  font-size: 0.45rem;
+  color: var(--green-dim);
+  letter-spacing: 0.3em;
+  margin-bottom: 12px;
+}
+
+.title-main {
+  font-size: 3.2rem;
+  color: var(--green);
+  text-shadow: var(--shadow-g), 0 0 40px #00ff4188;
+  letter-spacing: 0.1em;
+  line-height: 1;
+
+  /* Animação de glitch */
+  animation: glitch 4s infinite;
+}
+
+@keyframes glitch {
+  0%,89%,100% { text-shadow: var(--shadow-g), 0 0 40px #00ff4188; transform: none; }
+  90%  { text-shadow: -3px 0 var(--red), 3px 0 #00f, var(--shadow-g); transform: skewX(-1deg); }
+  91%  { text-shadow: var(--shadow-g); transform: none; }
+  95%  { text-shadow: 2px 0 var(--amber), -2px 0 var(--red); transform: skewX(1deg); }
+  96%  { text-shadow: var(--shadow-g); transform: none; }
+}
+
+.title-blink {
+  font-size: 1rem;
+  color: var(--green);
+  margin-top: 8px;
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink { 50% { opacity: 0; } }
+
+/* High Score no menu */
+.hiscore-display {
+  font-size: 0.55rem;
+  color: var(--amber);
+  letter-spacing: 0.1em;
+  margin-bottom: 28px;
+  text-shadow: 0 0 8px var(--amber);
+}
+
+/* Seletor de dificuldade */
+.diff-select { width: 100%; margin-bottom: 28px; }
+
+.diff-label {
+  font-size: 0.45rem;
+  color: var(--green-dim);
+  letter-spacing: 0.2em;
+  text-align: center;
+  margin-bottom: 14px;
+}
+
+.diff-buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.diff-btn {
+  font-family: var(--font);
+  font-size: 0.42rem;
+  padding: 10px 4px;
+  background: transparent;
+  border: 1px solid var(--green-dark);
+  color: var(--green-dim);
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  transition: all 0.15s;
+  border-radius: 2px;
+}
+
+.diff-btn:hover {
+  border-color: var(--green);
+  color: var(--green);
+  background: rgba(0,255,65,0.06);
+}
+
+.diff-btn.active {
+  border-color: var(--green);
+  color: var(--bg);
+  background: var(--green);
+  text-shadow: none;
+  box-shadow: var(--shadow-g);
+}
+
+/* Botão principal INICIAR */
+.btn-start {
+  font-family: var(--font);
+  font-size: 0.7rem;
+  padding: 16px 32px;
+  background: var(--green);
+  color: var(--bg);
+  border: none;
+  cursor: pointer;
+  letter-spacing: 0.1em;
+  box-shadow: var(--shadow-g2);
+  transition: all 0.15s;
+  margin-bottom: 28px;
+  border-radius: 2px;
+  animation: pulse-btn 2s ease-in-out infinite;
+}
+
+@keyframes pulse-btn {
+  0%,100% { box-shadow: var(--shadow-g2); }
+  50%     { box-shadow: 0 0 36px #00ff4166; }
+}
+
+.btn-start:hover {
+  background: var(--green-hi);
+  transform: scale(1.03);
+}
+
+.btn-start:active { transform: scale(0.97); }
+
+/* Dicas de controle */
+.controls-hint {
+  text-align: center;
+  font-size: 0.38rem;
+  color: var(--green-dark);
+  line-height: 2.2;
+  letter-spacing: 0.05em;
+}
+
+/* =============================================
+   TELA: JOGO — HUD
+   ============================================= */
+.hud {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 4px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 10px;
+}
+
+.hud-block { text-align: left; }
+.hud-center { text-align: center; }
+.hud-right  { text-align: right; }
+
+.hud-label {
+  font-size: 0.38rem;
+  color: var(--green-dim);
+  letter-spacing: 0.15em;
+  margin-bottom: 4px;
+}
+
+.hud-value {
+  font-size: 0.65rem;
+  color: var(--green);
+  text-shadow: var(--shadow-g);
+  letter-spacing: 0.05em;
+}
+
+/* =============================================
+   CANVAS + OVERLAY
+   ============================================= */
+.canvas-wrapper {
+  position: relative;
+  border: 2px solid var(--green-dim);
+  box-shadow: var(--shadow-g2), inset 0 0 32px rgba(0,255,65,0.04);
+  background: #010b02;
+  line-height: 0;
+}
+
+#game-canvas {
+  display: block;
+  image-rendering: pixelated;
+}
+
+/* Overlay de pausa */
+.game-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(2,13,4,0.85);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.overlay-text {
+  font-size: 1.2rem;
+  color: var(--green);
+  text-shadow: var(--shadow-g);
+  animation: blink 1s step-end infinite;
+}
+
+.overlay-sub {
+  font-size: 0.38rem;
+  color: var(--green-dim);
+  letter-spacing: 0.1em;
+}
+
+/* =============================================
+   CONTROLES MOBILE (D-PAD)
+   ============================================= */
+.mobile-controls {
+  display: none;  /* visível só em telas pequenas */
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin-top: 16px;
+}
+
+.mobile-row {
+  display: flex;
+  gap: 4px;
+}
+
+.d-btn {
+  font-family: var(--font);
+  width: 52px;
+  height: 52px;
+  background: var(--green-dark);
+  border: 1px solid var(--green-dim);
+  color: var(--green);
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: background 0.1s;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.d-btn:active { background: var(--green); color: var(--bg); }
+
+/* Rodapé do jogo */
+.game-footer {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.btn-small {
+  font-family: var(--font);
+  font-size: 0.38rem;
+  padding: 8px 14px;
+  background: transparent;
+  border: 1px solid var(--green-dark);
+  color: var(--green-dim);
+  cursor: pointer;
+  letter-spacing: 0.1em;
+  transition: all 0.15s;
+  border-radius: 2px;
+}
+
+.btn-small:hover {
+  border-color: var(--green);
+  color: var(--green);
+}
+
+/* =============================================
+   TELA: GAME OVER
+   ============================================= */
+.go-title {
+  font-size: 1.8rem;
+  color: var(--red);
+  text-shadow: 0 0 20px var(--red), 0 0 40px #ff224466;
+  letter-spacing: 0.08em;
+  margin-bottom: 32px;
+  animation: glitch-red 3s infinite;
+}
+
+@keyframes glitch-red {
+  0%,88%,100% { transform: none; text-shadow: 0 0 20px var(--red); }
+  89% { transform: skewX(-2deg); text-shadow: -3px 0 var(--green), 3px 0 var(--amber); }
+  90% { transform: none; }
+}
+
+.go-stats {
+  width: 100%;
+  border: 1px solid var(--border);
+  background: rgba(0,255,65,0.02);
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.go-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--green-dark);
+  padding-bottom: 10px;
+}
+
+.go-row:last-child { border-bottom: none; padding-bottom: 0; }
+
+.highlight-row .go-label,
+.highlight-row .go-val {
+  color: var(--amber);
+  text-shadow: 0 0 8px var(--amber);
+}
+
+.go-label {
+  font-size: 0.38rem;
+  color: var(--green-dim);
+  letter-spacing: 0.1em;
+}
+
+.go-val {
+  font-size: 0.62rem;
+  color: var(--green);
+  letter-spacing: 0.05em;
+}
+
+/* Mensagem de novo recorde */
+.new-record {
+  font-size: 0.55rem;
+  color: var(--amber);
+  text-shadow: 0 0 12px var(--amber);
+  letter-spacing: 0.15em;
+  margin-bottom: 20px;
+  animation: blink 0.6s step-end infinite;
+}
+
+.go-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.btn-ghost-game {
+  font-family: var(--font);
+  font-size: 0.45rem;
+  padding: 10px 24px;
+  background: transparent;
+  border: 1px solid var(--green-dark);
+  color: var(--green-dim);
+  cursor: pointer;
+  letter-spacing: 0.1em;
+  transition: all 0.15s;
+  border-radius: 2px;
+}
+
+.btn-ghost-game:hover {
+  border-color: var(--green);
+  color: var(--green);
+}
+
+/* =============================================
+   RESPONSIVO
+   ============================================= */
+@media (max-width: 560px) {
+  .title-main  { font-size: 2rem; }
+  .diff-buttons { grid-template-columns: repeat(2, 1fr); }
+  .mobile-controls { display: flex; }
+}
+
+@media (max-width: 400px) {
+  .title-main { font-size: 1.5rem; }
+  .btn-start  { font-size: 0.55rem; padding: 14px 20px; }
+}

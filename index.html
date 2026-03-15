@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SNAKE // RETRO</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Efeito CRT: linhas de scan -->
+  <div class="crt-overlay"></div>
+
+  <div class="wrapper">
+
+    <!-- ===== TELA: MENU INICIAL ===== -->
+    <div id="screen-menu" class="screen active">
+      <div class="title-block">
+        <div class="title-pre">// RETRO ARCADE //</div>
+        <div class="title-main">SNAKE</div>
+        <div class="title-blink">▮</div>
+      </div>
+
+      <div class="hiscore-display">
+        HI-SCORE: <span id="menu-hiscore">000000</span>
+      </div>
+
+      <div class="diff-select">
+        <div class="diff-label">— DIFICULDADE —</div>
+        <div class="diff-buttons">
+          <button class="diff-btn active" data-diff="easy"   onclick="selectDiff('easy',   this)">FÁCIL</button>
+          <button class="diff-btn"        data-diff="normal" onclick="selectDiff('normal', this)">NORMAL</button>
+          <button class="diff-btn"        data-diff="hard"   onclick="selectDiff('hard',   this)">DIFÍCIL</button>
+          <button class="diff-btn"        data-diff="insane" onclick="selectDiff('insane', this)">INSANO</button>
+        </div>
+      </div>
+
+      <button class="btn-start" onclick="startGame()">▶ INICIAR</button>
+
+      <div class="controls-hint">
+        <div class="hint-row">← ↑ → ↓ &nbsp;|&nbsp; WASD &nbsp;|&nbsp; TOUCH</div>
+        <div class="hint-row">P &nbsp;=&nbsp; PAUSAR</div>
+      </div>
+    </div>
+
+    <!-- ===== TELA: JOGO ===== -->
+    <div id="screen-game" class="screen">
+
+      <!-- HUD -->
+      <div class="hud">
+        <div class="hud-block">
+          <div class="hud-label">SCORE</div>
+          <div class="hud-value" id="hud-score">000000</div>
+        </div>
+        <div class="hud-block hud-center">
+          <div class="hud-label">NÍVEL</div>
+          <div class="hud-value" id="hud-level">01</div>
+        </div>
+        <div class="hud-block hud-right">
+          <div class="hud-label">HI-SCORE</div>
+          <div class="hud-value" id="hud-hiscore">000000</div>
+        </div>
+      </div>
+
+      <!-- Canvas principal -->
+      <div class="canvas-wrapper">
+        <canvas id="game-canvas"></canvas>
+
+        <!-- Overlay de pausa -->
+        <div id="pause-overlay" class="game-overlay" style="display:none">
+          <div class="overlay-text">PAUSADO</div>
+          <div class="overlay-sub">PRESSIONE P PARA CONTINUAR</div>
+        </div>
+      </div>
+
+      <!-- Controles mobile -->
+      <div class="mobile-controls">
+        <div class="mobile-row">
+          <button class="d-btn" id="btn-up"    ontouchstart="mobileDir('UP')">▲</button>
+        </div>
+        <div class="mobile-row">
+          <button class="d-btn" id="btn-left"  ontouchstart="mobileDir('LEFT')">◄</button>
+          <button class="d-btn" id="btn-down"  ontouchstart="mobileDir('DOWN')">▼</button>
+          <button class="d-btn" id="btn-right" ontouchstart="mobileDir('RIGHT')">►</button>
+        </div>
+      </div>
+
+      <div class="game-footer">
+        <button class="btn-small" onclick="togglePause()">⏸ PAUSAR</button>
+        <button class="btn-small" onclick="goMenu()">⏹ MENU</button>
+      </div>
+
+    </div>
+
+    <!-- ===== TELA: GAME OVER ===== -->
+    <div id="screen-gameover" class="screen">
+      <div class="go-title" id="go-title">GAME OVER</div>
+
+      <div class="go-stats">
+        <div class="go-row">
+          <span class="go-label">PONTUAÇÃO</span>
+          <span class="go-val" id="go-score">000000</span>
+        </div>
+        <div class="go-row">
+          <span class="go-label">NÍVEL</span>
+          <span class="go-val" id="go-level">01</span>
+        </div>
+        <div class="go-row">
+          <span class="go-label">COBRAS COMIDAS</span>
+          <span class="go-val" id="go-eaten">00</span>
+        </div>
+        <div class="go-row highlight-row">
+          <span class="go-label">HI-SCORE</span>
+          <span class="go-val" id="go-hiscore">000000</span>
+        </div>
+      </div>
+
+      <div id="new-record-msg" class="new-record" style="display:none">
+        ★ NOVO RECORDE! ★
+      </div>
+
+      <div class="go-buttons">
+        <button class="btn-start" onclick="startGame()">▶ JOGAR NOVAMENTE</button>
+        <button class="btn-ghost-game" onclick="goMenu()">MENU</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
